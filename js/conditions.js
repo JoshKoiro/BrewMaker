@@ -191,3 +191,7 @@ function getConditionsConfig() {
 // Expose necessary functions
 window.initializeConditions = initializeConditions;
 window.getConditionsConfig = getConditionsConfig;
+window.addCondition = addCondition;
+window.addTrigger = addTrigger;
+window.addAction = addAction;
+window.updateTriggerValues = updateTriggerValues;

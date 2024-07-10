@@ -10,6 +10,9 @@ function initializeEventListeners() {
     exportJSBtn.addEventListener('click', () => exportConfig('js'));
     exportJSONBtn.addEventListener('click', () => exportConfig('json'));
     importFileInput.addEventListener('change', (e) => importConfig(e.target.files[0]));
+
+    // Initialize conditions
+    initializeConditions();
 }
 
 // Call this function when the DOM is loaded

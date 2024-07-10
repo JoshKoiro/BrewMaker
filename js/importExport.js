@@ -1,5 +1,9 @@
 function getFormConfig() {
-    const config = { groups: [] };
+    const config = { 
+        groups: [],
+        conditions: []
+    };
+    
     document.querySelectorAll('.card').forEach(groupEl => {
         const group = {
             heading: groupEl.querySelector('.card-header input:nth-child(1)').value,
@@ -20,6 +24,9 @@ function getFormConfig() {
 
         config.groups.push(group);
     });
+
+    config.conditions = getConditionsConfig();
+
     return config;
 }
 
@@ -82,4 +89,58 @@ function renderConfig(config) {
             toggleOptionsInput(fieldTypeSelect);
         });
     });
+
+    // Render conditions
+    conditionsContainer.innerHTML = '';
+    if (config.conditions) {
+        config.conditions.forEach(condition => {
+            addCondition();
+            const conditionEl = conditionsContainer.lastElementChild;
+            
+            condition.if.forEach((trigger, index) => {
+                if (index > 0) addTrigger(conditionEl.id);
+                const triggerEl = conditionEl.querySelectorAll('.condition-triggers > div')[index];
+                triggerEl.querySelector('.trigger-category').value = trigger.category;
+                updateTriggerValues(triggerEl.querySelector('.trigger-category'));
+                const valuesElement = triggerEl.querySelector('.trigger-values > *');
+                if (valuesElement.tagName === 'SELECT') {
+                    trigger.values.forEach(value => {
+                        const option = valuesElement.querySelector(`option[value="${value}"]`);
+                        if (option) option.selected = true;
+                    });
+                } else {
+                    valuesElement.value = trigger.values.join(', ');
+                }
+            });
+
+            condition.then.forEach((action, index) => {
+                if (index > 0) addAction(conditionEl.id);
+                const actionEl = conditionEl.querySelectorAll('.condition-actions > div')[index];
+                actionEl.querySelector('.action-type').value = action.type;
+                actionEl.querySelector('.action-category').value = action.category;
+                updateActionValues(actionEl.querySelector('.action-category'));
+                const valuesElement = actionEl.querySelector('.action-values > *:first-child');
+                const wholeCategoryCheckbox = actionEl.querySelector('.action-values input[type="checkbox"]');
+                
+                if (action.applyToWholeCategory) {
+                    wholeCategoryCheckbox.checked = true;
+                } else {
+                    if (valuesElement.tagName === 'SELECT') {
+                        action.values.forEach(value => {
+                            const option = valuesElement.querySelector(`option[value="${value}"]`);
+                            if (option) option.selected = true;
+                        });
+                    } else {
+                        valuesElement.value = action.values.join(', ');
+                    }
+                }
+            });
+        });
+    }
 }
+
+// Expose necessary functions
+window.getFormConfig = getFormConfig;
+window.exportConfig = exportConfig;
+window.importConfig = importConfig;
+window.renderConfig = renderConfig;
