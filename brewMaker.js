@@ -11,10 +11,11 @@ let fieldCounter = 0;
 function createGroup() {
     const groupId = `group_${groupCounter++}`;
     const group = document.createElement('div');
-    group.className = 'card mt-3';
+    group.className = 'card mt-3 draggable';
+    group.draggable = true;
     group.id = groupId;
     group.innerHTML = `
-        <div class="card-header draggable" draggable="true">
+        <div class="card-header">
             <input type="text" class="form-control mb-2" placeholder="Group Heading">
             <input type="text" class="form-control mb-2" placeholder="Icon Name">
             <button class="btn btn-danger btn-sm float-end delete-group">Delete Group</button>
@@ -75,51 +76,98 @@ function toggleOptionsInput(selectElement) {
     optionsInput.style.display = selectElement.value === 'select' ? 'block' : 'none';
 }
 
+let draggingElement = null;
+let dropTarget = null;
+
 function setupDragAndDrop(element) {
     element.addEventListener('dragstart', dragStart);
     element.addEventListener('dragend', dragEnd);
-    document.addEventListener('dragover', dragOver);
-    document.addEventListener('drop', drop);
 }
 
 function dragStart(e) {
-    e.dataTransfer.setData('text/plain', e.target.id);
-    setTimeout(() => e.target.classList.add('dragging'), 0);
+    draggingElement = e.target.closest('.draggable');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', ''); // Required for Firefox
+    setTimeout(() => draggingElement.classList.add('dragging'), 0);
 }
 
 function dragEnd(e) {
-    e.target.classList.remove('dragging');
+    if (draggingElement && dropTarget) {
+        const isGroup = draggingElement.classList.contains('card');
+        if (isGroup) {
+            rearrangeGroups();
+        } else {
+            rearrangeFields();
+        }
+    }
+    
+    if (draggingElement) {
+        draggingElement.classList.remove('dragging');
+    }
+    draggingElement = null;
+    dropTarget = null;
+    clearDragOverStyles();
 }
 
-function dragOver(e) {
-    e.preventDefault();
-    const draggable = document.querySelector('.dragging');
-    if (!draggable) return;
-
-    const closestElement = getClosestDraggableElement(e.clientY);
-    if (closestElement) {
-        const container = draggable.closest('.card') ? groupsContainer : closestElement.closest('tbody');
-        const insertBefore = draggable.closest('.card') === closestElement.closest('.card') && 
-                             draggable.getBoundingClientRect().top < closestElement.getBoundingClientRect().top;
-        container.insertBefore(draggable, insertBefore ? closestElement : closestElement.nextSibling);
+function rearrangeGroups() {
+    const rect = dropTarget.getBoundingClientRect();
+    const dropY = rect.top + rect.height / 2;
+    if (event.clientY < dropY) {
+        groupsContainer.insertBefore(draggingElement, dropTarget);
+    } else {
+        groupsContainer.insertBefore(draggingElement, dropTarget.nextElementSibling);
     }
 }
+
+function rearrangeFields() {
+    const sourceTable = draggingElement.closest('tbody');
+    const targetTable = dropTarget.closest('tbody');
+    
+    if (sourceTable !== targetTable) {
+        targetTable.insertBefore(draggingElement, dropTarget);
+    } else {
+        const rect = dropTarget.getBoundingClientRect();
+        const dropY = rect.top + rect.height / 2;
+        if (event.clientY < dropY) {
+            sourceTable.insertBefore(draggingElement, dropTarget);
+        } else {
+            sourceTable.insertBefore(draggingElement, dropTarget.nextElementSibling);
+        }
+    }
+}
+
+function clearDragOverStyles() {
+    document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+}
+
+document.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    if (!draggingElement) return;
+
+    dropTarget = getClosestDraggableElement(e.clientY);
+    
+    if (dropTarget) {
+        clearDragOverStyles();
+        dropTarget.classList.add('drag-over');
+    }
+});
+
+document.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dragEnd(e);
+});
 
 function getClosestDraggableElement(clientY) {
     const draggableElements = [...document.querySelectorAll('.draggable:not(.dragging)')];
     return draggableElements.reduce((closest, element) => {
         const box = element.getBoundingClientRect();
         const offset = clientY - box.top - box.height / 2;
-        if (offset < 0 && offset > closest.offset) {
-            return { offset, element };
+        if (Math.abs(offset) < Math.abs(closest.offset)) {
+            return { offset: offset, element: element };
         } else {
             return closest;
         }
-    }, { offset: Number.NEGATIVE_INFINITY }).element;
-}
-
-function drop(e) {
-    e.preventDefault();
+    }, { offset: Number.POSITIVE_INFINITY }).element;
 }
 
 function getFormConfig() {
