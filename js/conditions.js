@@ -41,10 +41,13 @@ function addCondition() {
 
 function addTrigger(conditionId) {
     const triggerElement = document.createElement('div');
-    triggerElement.className = 'mb-2';
+    triggerElement.className = 'mb-2 d-flex align-items-center';
     triggerElement.innerHTML = `
-        <select class="form-select trigger-category"></select>
-        <div class="mt-2 trigger-values"></div>
+        <div class="flex-grow-1">
+            <select class="form-select trigger-category"></select>
+            <div class="mt-2 trigger-values"></div>
+        </div>
+        <button class="btn btn-danger btn-sm ms-2 remove-trigger">Remove</button>
     `;
 
     const condition = document.getElementById(conditionId);
@@ -52,20 +55,24 @@ function addTrigger(conditionId) {
 
     populateCategoryDropdown(triggerElement.querySelector('.trigger-category'));
     triggerElement.querySelector('.trigger-category').addEventListener('change', (e) => updateTriggerValues(e.target));
+    triggerElement.querySelector('.remove-trigger').addEventListener('click', () => triggerElement.remove());
 }
 
 function addAction(conditionId) {
     const actionElement = document.createElement('div');
-    actionElement.className = 'mb-2';
+    actionElement.className = 'mb-2 d-flex align-items-center';
     actionElement.innerHTML = `
-        <select class="form-select action-type">
-            <option value="removes">Removes</option>
-            <option value="shows">Shows</option>
-            <option value="hides">Hides</option>
-            <option value="requires">Requires</option>
-        </select>
-        <select class="form-select mt-2 action-category"></select>
-        <div class="mt-2 action-values"></div>
+        <div class="flex-grow-1">
+            <select class="form-select action-type">
+                <option value="removes">Removes</option>
+                <option value="shows">Shows</option>
+                <option value="hides">Hides</option>
+                <option value="requires">Requires</option>
+            </select>
+            <select class="form-select mt-2 action-category"></select>
+            <div class="mt-2 action-values"></div>
+        </div>
+        <button class="btn btn-danger btn-sm ms-2 remove-action">Remove</button>
     `;
 
     const condition = document.getElementById(conditionId);
@@ -73,6 +80,7 @@ function addAction(conditionId) {
 
     populateCategoryDropdown(actionElement.querySelector('.action-category'));
     actionElement.querySelector('.action-category').addEventListener('change', (e) => updateActionValues(e.target));
+    actionElement.querySelector('.remove-action').addEventListener('click', () => actionElement.remove());
 }
 
 function populateCategoryDropdown(selectElement) {
@@ -195,3 +203,4 @@ window.addCondition = addCondition;
 window.addTrigger = addTrigger;
 window.addAction = addAction;
 window.updateTriggerValues = updateTriggerValues;
+window.updateActionValues = updateActionValues;

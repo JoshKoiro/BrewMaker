@@ -4,22 +4,31 @@ function getFormConfig() {
         conditions: []
     };
     
-    document.querySelectorAll('.card').forEach(groupEl => {
+    document.querySelectorAll('#groups .card').forEach(groupEl => {
         const group = {
-            heading: groupEl.querySelector('.card-header input:nth-child(1)').value,
-            icon: groupEl.querySelector('.card-header input:nth-child(2)').value,
+            heading: groupEl.querySelector('.card-header input[placeholder="Group Heading"]')?.value || '',
+            icon: groupEl.querySelector('.card-header input[placeholder="Icon Name"]')?.value || '',
             categories: []
         };
 
         groupEl.querySelectorAll('tbody tr').forEach(rowEl => {
-            const fieldType = rowEl.querySelector('td:nth-child(2) select').value;
-            const category = {
-                category: formatFieldName(rowEl.querySelector('td:nth-child(1) input').value),
-                type: fieldType,
-                required: rowEl.querySelector('td:nth-child(3) input').checked,
-                options: fieldType === 'select' ? rowEl.querySelector('td:nth-child(4) input').value.split(',').map(o => o.trim()).filter(o => o !== '') : []
-            };
-            group.categories.push(category);
+            const fieldNameInput = rowEl.querySelector('td:nth-child(1) input');
+            const fieldTypeSelect = rowEl.querySelector('td:nth-child(2) select');
+            const requiredCheckbox = rowEl.querySelector('td:nth-child(3) input[type="checkbox"]');
+            const optionsInput = rowEl.querySelector('td:nth-child(4) input');
+
+            if (fieldNameInput && fieldTypeSelect) {
+                const fieldType = fieldTypeSelect.value;
+                const category = {
+                    category: formatFieldName(fieldNameInput.value),
+                    type: fieldType,
+                    required: requiredCheckbox ? requiredCheckbox.checked : false,
+                    options: (fieldType === 'select' && optionsInput) 
+                        ? optionsInput.value.split(',').map(o => o.trim()).filter(o => o !== '') 
+                        : []
+                };
+                group.categories.push(category);
+            }
         });
 
         config.groups.push(group);
@@ -74,8 +83,8 @@ function renderConfig(config) {
     config.groups.forEach(group => {
         createGroup();
         const groupEl = groupsContainer.lastElementChild;
-        groupEl.querySelector('.card-header input:nth-child(1)').value = group.heading;
-        groupEl.querySelector('.card-header input:nth-child(2)').value = group.icon;
+        groupEl.querySelector('.card-header input[placeholder="Group Heading"]').value = group.heading;
+        groupEl.querySelector('.card-header input[placeholder="Icon Name"]').value = group.icon;
 
         group.categories.forEach(category => {
             createField(groupEl);
@@ -83,7 +92,7 @@ function renderConfig(config) {
             rowEl.querySelector('td:nth-child(1) input').value = category.category;
             const fieldTypeSelect = rowEl.querySelector('td:nth-child(2) select');
             fieldTypeSelect.value = category.type;
-            rowEl.querySelector('td:nth-child(3) input').checked = category.required;
+            rowEl.querySelector('td:nth-child(3) input[type="checkbox"]').checked = category.required;
             const optionsInput = rowEl.querySelector('td:nth-child(4) input');
             optionsInput.value = category.options.join(', ');
             toggleOptionsInput(fieldTypeSelect);
