@@ -34,15 +34,18 @@ function addCondition(name = '') {
     conditionElement.querySelector('.delete-condition').addEventListener('click', () => conditionElement.remove());
     conditionElement.querySelector('.add-trigger').addEventListener('click', () => addTrigger(conditionId));
     conditionElement.querySelector('.add-action').addEventListener('click', () => addAction(conditionId));
-    conditionElement.querySelector('.toggle-condition').addEventListener('click', (e) => toggleCondition(e, conditionElement));
+    conditionElement.querySelector('.toggle-condition').addEventListener('click', (e) => toggleCondition(conditionElement));
+    
+    // Add double-click event listener to the card header
+    conditionElement.querySelector('.card-header').addEventListener('dblclick', () => toggleCondition(conditionElement));
 
     conditionsContainer.appendChild(conditionElement);
     addTrigger(conditionId);
     addAction(conditionId);
 }
 
-function toggleCondition(e, conditionElement) {
-    const button = e.target;
+function toggleCondition(conditionElement) {
+    const button = conditionElement.querySelector('.toggle-condition');
     const cardBody = conditionElement.querySelector('.card-body');
     if (cardBody.style.display === 'none') {
         cardBody.style.display = 'block';

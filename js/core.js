@@ -38,9 +38,24 @@ function createGroup() {
     group.querySelector('.delete-group').addEventListener('click', () => group.remove());
     group.querySelector('.add-field').addEventListener('click', () => createField(group));
     group.querySelector('.toggle-group').addEventListener('click', (e) => toggleGroup(e, group));
+    
+    // Add double-click event listener to the card header
+    group.querySelector('.card-header').addEventListener('dblclick', (e) => toggleGroup(e, group));
 
     groupsContainer.appendChild(group);
     setupDragAndDrop(group);
+}
+
+function toggleGroup(e, group) {
+    const button = group.querySelector('.toggle-group');
+    const cardBody = group.querySelector('.card-body');
+    if (cardBody.style.display === 'none') {
+        cardBody.style.display = 'block';
+        button.textContent = 'Collapse';
+    } else {
+        cardBody.style.display = 'none';
+        button.textContent = 'Expand';
+    }
 }
 
 function createField(group) {
@@ -75,18 +90,13 @@ function toggleOptionsInput(selectElement) {
     optionsInput.style.display = selectElement.value === 'select' ? 'block' : 'none';
 }
 
-function toggleGroup(e, group) {
-    const button = e.target;
-    const cardBody = group.querySelector('.card-body');
-    if (cardBody.style.display === 'none') {
-        cardBody.style.display = 'block';
-        button.textContent = 'Collapse';
-    } else {
-        cardBody.style.display = 'none';
-        button.textContent = 'Expand';
-    }
-}
-
 function formatFieldName(name) {
     return name.toLowerCase().replace(/\s+/g, '_');
 }
+
+// Expose necessary functions
+window.createGroup = createGroup;
+window.createField = createField;
+window.toggleGroup = toggleGroup;
+window.toggleOptionsInput = toggleOptionsInput;
+window.formatFieldName = formatFieldName;
