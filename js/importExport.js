@@ -86,6 +86,14 @@ function renderConfig(config) {
         groupEl.querySelector('.card-header input[placeholder="Group Heading"]').value = group.heading;
         groupEl.querySelector('.card-header input[placeholder="Icon Name"]').value = group.icon;
 
+        // Collapse the group
+        const groupCardBody = groupEl.querySelector('.card-body');
+        const groupToggleButton = groupEl.querySelector('.toggle-group');
+        if (groupCardBody && groupToggleButton) {
+            groupCardBody.style.display = 'none';
+            groupToggleButton.textContent = 'Expand';
+        }
+
         group.categories.forEach(category => {
             createField(groupEl);
             const rowEl = groupEl.querySelector('tbody tr:last-child');
@@ -103,9 +111,17 @@ function renderConfig(config) {
     conditionsContainer.innerHTML = '';
     if (config.conditions) {
         config.conditions.forEach(condition => {
-            addCondition();
+            addCondition(condition.name || '');
             const conditionEl = conditionsContainer.lastElementChild;
             
+            // Collapse the condition
+            const conditionCardBody = conditionEl.querySelector('.card-body');
+            const conditionToggleButton = conditionEl.querySelector('.toggle-condition');
+            if (conditionCardBody && conditionToggleButton) {
+                conditionCardBody.style.display = 'none';
+                conditionToggleButton.textContent = 'Expand';
+            }
+
             condition.if.forEach((trigger, index) => {
                 if (index > 0) addTrigger(conditionEl.id);
                 const triggerEl = conditionEl.querySelectorAll('.condition-triggers > div')[index];
@@ -146,6 +162,11 @@ function renderConfig(config) {
             });
         });
     }
+}
+
+// Helper function to format field names
+function formatFieldName(name) {
+    return name.toLowerCase().replace(/\s+/g, '_');
 }
 
 // Expose necessary functions

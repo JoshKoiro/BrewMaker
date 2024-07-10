@@ -7,17 +7,18 @@ function initializeConditions() {
     addConditionBtn.addEventListener('click', addCondition);
 }
 
-function addCondition() {
+function addCondition(name = '') {
     const conditionId = `condition_${Date.now()}`;
     const conditionElement = document.createElement('div');
     conditionElement.className = 'card mt-3';
     conditionElement.id = conditionId;
     conditionElement.innerHTML = `
-        <div class="card-header">
-            <h5 class="mb-0">
-                Condition
-                <button class="btn btn-danger btn-sm float-end delete-condition">Delete</button>
-            </h5>
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <input type="text" class="form-control condition-name" placeholder="Condition Name (Optional)" value="${name}" style="width: auto;">
+            <div>
+                <button class="btn btn-secondary btn-sm toggle-condition me-2">Collapse</button>
+                <button class="btn btn-danger btn-sm delete-condition">Delete</button>
+            </div>
         </div>
         <div class="card-body">
             <h6>If:</h6>
@@ -33,10 +34,23 @@ function addCondition() {
     conditionElement.querySelector('.delete-condition').addEventListener('click', () => conditionElement.remove());
     conditionElement.querySelector('.add-trigger').addEventListener('click', () => addTrigger(conditionId));
     conditionElement.querySelector('.add-action').addEventListener('click', () => addAction(conditionId));
+    conditionElement.querySelector('.toggle-condition').addEventListener('click', (e) => toggleCondition(e, conditionElement));
 
     conditionsContainer.appendChild(conditionElement);
     addTrigger(conditionId);
     addAction(conditionId);
+}
+
+function toggleCondition(e, conditionElement) {
+    const button = e.target;
+    const cardBody = conditionElement.querySelector('.card-body');
+    if (cardBody.style.display === 'none') {
+        cardBody.style.display = 'block';
+        button.textContent = 'Collapse';
+    } else {
+        cardBody.style.display = 'none';
+        button.textContent = 'Expand';
+    }
 }
 
 function addTrigger(conditionId) {
@@ -160,6 +174,7 @@ function getConditionsConfig() {
     const conditions = [];
     document.querySelectorAll('#conditions .card').forEach(conditionEl => {
         const condition = {
+            name: conditionEl.querySelector('.condition-name').value,
             if: [],
             then: []
         };
@@ -204,3 +219,4 @@ window.addTrigger = addTrigger;
 window.addAction = addAction;
 window.updateTriggerValues = updateTriggerValues;
 window.updateActionValues = updateActionValues;
+window.toggleCondition = toggleCondition;
