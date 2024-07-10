@@ -15,10 +15,15 @@ function createGroup() {
     group.draggable = true;
     group.id = groupId;
     group.innerHTML = `
-        <div class="card-header">
-            <input type="text" class="form-control mb-2" placeholder="Group Heading">
-            <input type="text" class="form-control mb-2" placeholder="Icon Name">
-            <button class="btn btn-danger btn-sm float-end delete-group">Delete Group</button>
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <input type="text" class="form-control mb-2" placeholder="Group Heading">
+                <input type="text" class="form-control mb-2" placeholder="Icon Name">
+            </div>
+            <div>
+                <button class="btn btn-secondary btn-sm toggle-group me-2">Collapse</button>
+                <button class="btn btn-danger btn-sm delete-group">Delete Group</button>
+            </div>
         </div>
         <div class="card-body">
             <table class="table">
@@ -39,9 +44,22 @@ function createGroup() {
 
     group.querySelector('.delete-group').addEventListener('click', () => group.remove());
     group.querySelector('.add-field').addEventListener('click', () => createField(group));
+    group.querySelector('.toggle-group').addEventListener('click', (e) => toggleGroup(e, group));
 
     groupsContainer.appendChild(group);
     setupDragAndDrop(group);
+}
+
+function toggleGroup(e, group) {
+    const button = e.target;
+    const cardBody = group.querySelector('.card-body');
+    if (cardBody.style.display === 'none') {
+        cardBody.style.display = 'block';
+        button.textContent = 'Collapse';
+    } else {
+        cardBody.style.display = 'none';
+        button.textContent = 'Expand';
+    }
 }
 
 function createField(group) {
@@ -78,6 +96,7 @@ function toggleOptionsInput(selectElement) {
 
 let draggingElement = null;
 let dropTarget = null;
+let isDraggingGroup = false;
 
 function setupDragAndDrop(element) {
     element.addEventListener('dragstart', dragStart);
@@ -86,6 +105,7 @@ function setupDragAndDrop(element) {
 
 function dragStart(e) {
     draggingElement = e.target.closest('.draggable');
+    isDraggingGroup = draggingElement.classList.contains('card');
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', ''); // Required for Firefox
     setTimeout(() => draggingElement.classList.add('dragging'), 0);
@@ -93,8 +113,7 @@ function dragStart(e) {
 
 function dragEnd(e) {
     if (draggingElement && dropTarget) {
-        const isGroup = draggingElement.classList.contains('card');
-        if (isGroup) {
+        if (isDraggingGroup) {
             rearrangeGroups();
         } else {
             rearrangeFields();
@@ -106,6 +125,7 @@ function dragEnd(e) {
     }
     draggingElement = null;
     dropTarget = null;
+    isDraggingGroup = false;
     clearDragOverStyles();
 }
 
@@ -137,7 +157,9 @@ function rearrangeFields() {
 }
 
 function clearDragOverStyles() {
-    document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+    document.querySelectorAll('.drag-over-group, .drag-over-field').forEach(el => {
+        el.classList.remove('drag-over-group', 'drag-over-field');
+    });
 }
 
 document.addEventListener('dragover', (e) => {
@@ -148,7 +170,11 @@ document.addEventListener('dragover', (e) => {
     
     if (dropTarget) {
         clearDragOverStyles();
-        dropTarget.classList.add('drag-over');
+        if (isDraggingGroup && dropTarget.classList.contains('card')) {
+            dropTarget.classList.add('drag-over-group');
+        } else if (!isDraggingGroup && dropTarget.closest('tr')) {
+            dropTarget.classList.add('drag-over-field');
+        }
     }
 });
 
@@ -160,6 +186,12 @@ document.addEventListener('drop', (e) => {
 function getClosestDraggableElement(clientY) {
     const draggableElements = [...document.querySelectorAll('.draggable:not(.dragging)')];
     return draggableElements.reduce((closest, element) => {
+        // Only consider groups when dragging a group, and fields when dragging a field
+        if ((isDraggingGroup && !element.classList.contains('card')) ||
+            (!isDraggingGroup && element.classList.contains('card'))) {
+            return closest;
+        }
+
         const box = element.getBoundingClientRect();
         const offset = clientY - box.top - box.height / 2;
         if (Math.abs(offset) < Math.abs(closest.offset)) {

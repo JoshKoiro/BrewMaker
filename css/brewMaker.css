@@ -1,0 +1,27 @@
+.drag-over-group {
+    border: 2px dashed #007bff;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.drag-over-field {
+    border-top: 2px solid #28a745;
+    background-color: rgba(40, 167, 69, 0.1);
+}
+
+.dragging {
+    opacity: 0.5;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+}
+
+.toggle-group {
+    transition: all 0.3s ease;
+}
+
+.card-body {
+    transition: all 0.3s ease;
+}
