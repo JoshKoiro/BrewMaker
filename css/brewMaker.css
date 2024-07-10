@@ -1,27 +1,59 @@
-.drag-over-group {
-    border: 2px dashed #007bff;
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: rgba(0, 123, 255, 0.1);
+/* Existing styles */
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #222;
+    color: #fff;
 }
 
-.drag-over-field {
-    border-top: 2px solid #28a745;
-    background-color: rgba(40, 167, 69, 0.1);
+body.dark-mode .card {
+    background-color: #333;
+    border-color: #444;
 }
 
-.dragging {
-    opacity: 0.5;
+body.dark-mode .card-header {
+    background-color: #444;
+    border-bottom-color: #555;
 }
 
-.card-header {
-    background-color: #f8f9fa;
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+    background-color: #444;
+    color: #fff;
+    border-color: #555;
 }
 
-.toggle-group {
-    transition: all 0.3s ease;
+body.dark-mode .btn-outline-primary {
+    color: #fff;
+    border-color: #fff;
 }
 
-.card-body {
-    transition: all 0.3s ease;
+body.dark-mode .btn-outline-primary:hover {
+    background-color: #fff;
+    color: #222;
+}
+
+body.dark-mode .table {
+    color: #fff;
+}
+
+body.dark-mode .drag-over-group {
+    border-color: #007bff;
+    background-color: rgba(0, 123, 255, 0.2);
+}
+
+body.dark-mode .drag-over-field {
+    border-color: #28a745;
+    background-color: rgba(40, 167, 69, 0.2);
+}
+
+/* Custom styles for drag and drop in dark mode */
+[data-bs-theme="dark"] .drag-over-group {
+    border-color: #007bff;
+    background-color: rgba(0, 123, 255, 0.2);
+}
+
+[data-bs-theme="dark"] .drag-over-field {
+    border-color: #28a745;
+    background-color: rgba(40, 167, 69, 0.2);
 }
