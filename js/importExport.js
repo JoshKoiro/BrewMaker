@@ -40,7 +40,7 @@ function getFormConfig() {
 function getOptions(fieldType, optionsInput) {
     switch (fieldType) {
         case 'dropdown':
-            return optionsInput.value.split(',').map(o => o.trim()).filter(o => o !== '');
+            return optionsInput.value.split('\n').map(o => o.trim()).filter(o => o !== '');
         case 'checkbox':
             return ['Yes', 'No'];
         default:
@@ -150,9 +150,9 @@ function renderConfig(config) {
             const fieldTypeSelect = rowEl.querySelector('td:nth-child(2) select');
             fieldTypeSelect.value = category.type;
             rowEl.querySelector('td:nth-child(3) input[type="checkbox"]').checked = category.required;
-            const optionsInput = rowEl.querySelector('td:nth-child(4) input');
+            const optionsInput = rowEl.querySelector('td:nth-child(4) textarea');
             if (category.type === 'dropdown') {
-                optionsInput.value = category.options.join(', ');
+                optionsInput.value = category.options.join('\n');
                 optionsInput.style.display = 'block';
             } else {
                 optionsInput.style.display = 'none';

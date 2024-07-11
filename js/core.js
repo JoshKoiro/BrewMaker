@@ -85,7 +85,7 @@ function createField(group) {
             </select>
         </td>
         <td><input type="checkbox"></td>
-        <td><input type="text" class="form-control options-input" placeholder="Options (comma-separated)" style="display: none;"></td>
+        <td><textarea class="form-control options-input" placeholder="Options (one per line)" style="display: none;"></textarea></td>
         <td><button class="btn btn-danger btn-sm delete-field">
         <i class="material-symbols-outlined delete">delete</i>
         </button></td>
