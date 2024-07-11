@@ -7,6 +7,10 @@
     "release": "node build/release.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoshKoiro/BrewMaker"
+  },
+  "author": "Josh Koiro",
+  "license": "GPL-3.0-only"
 }
