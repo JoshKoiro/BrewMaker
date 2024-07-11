@@ -36,7 +36,6 @@ function addCondition(name = '') {
     conditionElement.querySelector('.add-action').addEventListener('click', () => addAction(conditionId));
     conditionElement.querySelector('.toggle-condition').addEventListener('click', (e) => toggleCondition(conditionElement));
     
-    // Add double-click event listener to the card header
     conditionElement.querySelector('.card-header').addEventListener('dblclick', () => toggleCondition(conditionElement));
 
     conditionsContainer.appendChild(conditionElement);
@@ -125,7 +124,7 @@ function updateValues(categorySelect, valuesContainer, isTrigger) {
     const category = getAllCategories().find(cat => cat.category === categorySelect.value);
     valuesContainer.innerHTML = '';
 
-    if (category.type === 'select') {
+    if (category.type === 'dropdown') {
         const select = document.createElement('select');
         select.className = 'form-select';
         select.multiple = isTrigger;
@@ -136,11 +135,19 @@ function updateValues(categorySelect, valuesContainer, isTrigger) {
             select.appendChild(optionElement);
         });
         valuesContainer.appendChild(select);
+    } else if (category.type === 'checkbox') {
+        const checkboxDiv = document.createElement('div');
+        checkboxDiv.className = 'form-check';
+        checkboxDiv.innerHTML = `
+            <input class="form-check-input" type="checkbox" id="checkbox_${category.category}">
+            <label class="form-check-label" for="checkbox_${category.category}">Checked</label>
+        `;
+        valuesContainer.appendChild(checkboxDiv);
     } else {
         const input = document.createElement('input');
-        input.type = 'text';
+        input.type = category.type === 'number' ? 'number' : (category.type === 'date' ? 'date' : 'text');
         input.className = 'form-control';
-        input.placeholder = 'Enter comma-separated values';
+        input.placeholder = `Enter ${category.type} value`;
         valuesContainer.appendChild(input);
     }
 
@@ -164,7 +171,7 @@ function getAllCategories() {
             categories.push({
                 category: formatFieldName(rowEl.querySelector('td:nth-child(1) input').value),
                 type: rowEl.querySelector('td:nth-child(2) select').value,
-                options: rowEl.querySelector('td:nth-child(2) select').value === 'select' 
+                options: rowEl.querySelector('td:nth-child(2) select').value === 'dropdown' 
                     ? rowEl.querySelector('td:nth-child(4) input').value.split(',').map(o => o.trim()).filter(o => o !== '')
                     : []
             });

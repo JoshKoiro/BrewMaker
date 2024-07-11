@@ -39,7 +39,6 @@ function createGroup() {
     group.querySelector('.add-field').addEventListener('click', () => createField(group));
     group.querySelector('.toggle-group').addEventListener('click', (e) => toggleGroup(e, group));
     
-    // Add double-click event listener to the card header
     group.querySelector('.card-header').addEventListener('dblclick', (e) => toggleGroup(e, group));
 
     groupsContainer.appendChild(group);
@@ -70,8 +69,11 @@ function createField(group) {
             <select class="form-control field-type">
                 <option value="text">Text</option>
                 <option value="number">Number</option>
+                <option value="date">Date</option>
+                <option value="dropdown">Dropdown</option>
+                <option value="checkbox">Checkbox</option>
+                <option value="phone">Phone</option>
                 <option value="email">Email</option>
-                <option value="select">Select</option>
             </select>
         </td>
         <td><input type="checkbox"></td>
@@ -87,11 +89,12 @@ function createField(group) {
 
 function toggleOptionsInput(selectElement) {
     const optionsInput = selectElement.closest('tr').querySelector('.options-input');
-    optionsInput.style.display = selectElement.value === 'select' ? 'block' : 'none';
+    optionsInput.style.display = selectElement.value === 'dropdown' ? 'block' : 'none';
 }
 
 function formatFieldName(name) {
-    return name.toLowerCase().replace(/\s+/g, '_');
+    return name;
+    // return name.toLowerCase().replace(/\s+/g, '_');
 }
 
 // Expose necessary functions

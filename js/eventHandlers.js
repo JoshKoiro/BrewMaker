@@ -28,19 +28,23 @@ function initializeEventListeners() {
 function toggleDarkMode() {
     const isDarkMode = document.documentElement.getAttribute('data-bs-theme') === 'dark';
     const newMode = isDarkMode ? 'light' : 'dark';
+    const button = document.getElementById('darkModeToggle');
+    if (newMode === 'dark') {
+        button.innerHTML = '<i class="material-symbols-outlined light_mode">light_mode</i>'
+    } else {
+        button.innerHTML = '<i class="material-symbols-outlined dark_mode">dark_mode</i>'
+    }
     document.documentElement.setAttribute('data-bs-theme', newMode);
     localStorage.setItem('darkMode', newMode);
     updateDarkModeButton(!isDarkMode);
 }
 
 function updateDarkModeButton(isDarkMode) {
-    const icon = darkModeToggle.querySelector('i');
+    const button = document.getElementById('darkModeToggle');
     if (isDarkMode) {
-        icon.classList.remove('bi-moon-stars');
-        icon.classList.add('bi-sun');
+        button.innerHTML = '<i class="material-symbols-outlined light_mode">light_mode</i>'
     } else {
-        icon.classList.remove('bi-sun');
-        icon.classList.add('bi-moon-stars');
+       button.innerHTML = '<i class="material-symbols-outlined dark_mode">dark_mode</i>'
     }
 }
 

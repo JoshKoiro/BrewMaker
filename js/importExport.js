@@ -23,9 +23,7 @@ function getFormConfig() {
                     category: formatFieldName(fieldNameInput.value),
                     type: fieldType,
                     required: requiredCheckbox ? requiredCheckbox.checked : false,
-                    options: (fieldType === 'select' && optionsInput) 
-                        ? optionsInput.value.split(',').map(o => o.trim()).filter(o => o !== '') 
-                        : []
+                    options: getOptions(fieldType, optionsInput)
                 };
                 group.categories.push(category);
             }
@@ -39,16 +37,27 @@ function getFormConfig() {
     return config;
 }
 
+function getOptions(fieldType, optionsInput) {
+    switch (fieldType) {
+        case 'dropdown':
+            return optionsInput.value.split(',').map(o => o.trim()).filter(o => o !== '');
+        case 'checkbox':
+            return ['Yes', 'No'];
+        default:
+            return [];
+    }
+}
+
 function exportConfig(format) {
     const config = getFormConfig();
     let content, filename, type;
 
     if (format === 'js') {
-        content = `window.formConfig = ${JSON.stringify(config, null, 2)};`;
+        content = `window.formConfig = ${formatJsObject(config)};`;
         filename = 'form_config.js';
         type = 'application/javascript';
     } else {
-        content = JSON.stringify(config, null, 2);
+        content = JSON.stringify(config, null, 4);  // Use 4 spaces for JSON indentation
         filename = 'form_config.json';
         type = 'application/json';
     }
@@ -60,6 +69,46 @@ function exportConfig(format) {
     a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
+}
+
+function formatJsObject(obj, indent = 0) {
+    const indentStr = ' '.repeat(4 * indent);
+    let result = '{\n';
+    const entries = Object.entries(obj);
+    entries.forEach(([key, value], index) => {
+        result += `${indentStr}    ${key}: `;
+        if (typeof value === 'object' && value !== null) {
+            if (Array.isArray(value)) {
+                if (value.length === 0) {
+                    result += '[]';
+                } else {
+                    result += '[\n';
+                    value.forEach((item, itemIndex) => {
+                        if (typeof item === 'object' && item !== null) {
+                            result += `${indentStr}        ${formatJsObject(item, indent + 2)}`;
+                        } else {
+                            result += `${indentStr}        ${JSON.stringify(item)}`;
+                        }
+                        if (itemIndex < value.length - 1) {
+                            result += ',';
+                        }
+                        result += '\n';
+                    });
+                    result += `${indentStr}    ]`;
+                }
+            } else {
+                result += formatJsObject(value, indent + 1);
+            }
+        } else {
+            result += JSON.stringify(value);
+        }
+        if (index < entries.length - 1) {
+            result += ',';
+        }
+        result += '\n';
+    });
+    result += `${indentStr}}`;
+    return result;
 }
 
 function importConfig(file) {
@@ -87,11 +136,11 @@ function renderConfig(config) {
         groupEl.querySelector('.card-header input[placeholder="Icon Name"]').value = group.icon;
 
         // Collapse the group
-        const groupCardBody = groupEl.querySelector('.card-body');
-        const groupToggleButton = groupEl.querySelector('.toggle-group');
-        if (groupCardBody && groupToggleButton) {
-            groupCardBody.style.display = 'none';
-            groupToggleButton.textContent = 'Expand';
+        const cardBody = groupEl.querySelector('.card-body');
+        const toggleButton = groupEl.querySelector('.toggle-group');
+        if (cardBody && toggleButton) {
+            cardBody.style.display = 'none';
+            toggleButton.textContent = 'Expand';
         }
 
         group.categories.forEach(category => {
@@ -102,8 +151,12 @@ function renderConfig(config) {
             fieldTypeSelect.value = category.type;
             rowEl.querySelector('td:nth-child(3) input[type="checkbox"]').checked = category.required;
             const optionsInput = rowEl.querySelector('td:nth-child(4) input');
-            optionsInput.value = category.options.join(', ');
-            toggleOptionsInput(fieldTypeSelect);
+            if (category.type === 'dropdown') {
+                optionsInput.value = category.options.join(', ');
+                optionsInput.style.display = 'block';
+            } else {
+                optionsInput.style.display = 'none';
+            }
         });
     });
 
@@ -162,11 +215,6 @@ function renderConfig(config) {
             });
         });
     }
-}
-
-// Helper function to format field names
-function formatFieldName(name) {
-    return name.toLowerCase().replace(/\s+/g, '_');
 }
 
 // Expose necessary functions
