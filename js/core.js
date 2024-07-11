@@ -9,13 +9,21 @@ function createGroup() {
     group.id = groupId;
     group.innerHTML = `
         <div class="card-header d-flex justify-content-between align-items-center">
-            <div>
-                <input type="text" class="form-control mb-2" placeholder="Group Heading">
-                <input type="text" class="form-control mb-2" placeholder="Icon Name">
+            <div class="mb-2 row flex-grow-1">
+                <div class="col-8">
+                <label for="groupName" class="form-label">Group Name</label>
+                <input name="groupName" type="text" class="form-control mb-2" placeholder="Group Heading">
+                </div>
+                <div class="col-3">
+                <label for="groupIcon" class="form-label">Group Icon</label>
+                <input name="groupIcon" type="text" class="form-control mb-2" placeholder="Icon Name">
+                </div>
             </div>
             <div>
                 <button class="btn btn-secondary btn-sm toggle-group me-2">Collapse</button>
-                <button class="btn btn-danger btn-sm delete-group">Delete Group</button>
+                <button class="btn btn-danger btn-sm delete-group">
+                <i class="material-symbols-outlined delete">delete</i>
+                </button>
             </div>
         </div>
         <div class="card-body">
@@ -50,10 +58,10 @@ function toggleGroup(e, group) {
     const cardBody = group.querySelector('.card-body');
     if (cardBody.style.display === 'none') {
         cardBody.style.display = 'block';
-        button.textContent = 'Collapse';
+        button.innerHTML = '<span class="material-symbols-outlined expand_circle_up">expand_circle_up</span>';
     } else {
         cardBody.style.display = 'none';
-        button.textContent = 'Expand';
+        button.innerHTML = '<span class="material-symbols-outlined expand_circle_down">expand_circle_down</span>';
     }
 }
 
@@ -78,7 +86,9 @@ function createField(group) {
         </td>
         <td><input type="checkbox"></td>
         <td><input type="text" class="form-control options-input" placeholder="Options (comma-separated)" style="display: none;"></td>
-        <td><button class="btn btn-danger btn-sm delete-field">Delete</button></td>
+        <td><button class="btn btn-danger btn-sm delete-field">
+        <i class="material-symbols-outlined delete">delete</i>
+        </button></td>
     `;
 
     row.querySelector('.delete-field').addEventListener('click', () => row.remove());

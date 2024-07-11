@@ -140,7 +140,7 @@ function renderConfig(config) {
         const toggleButton = groupEl.querySelector('.toggle-group');
         if (cardBody && toggleButton) {
             cardBody.style.display = 'none';
-            toggleButton.textContent = 'Expand';
+            toggleButton.innerHTML = '<span class="material-symbols-outlined">expand_circle_down</span>'
         }
 
         group.categories.forEach(category => {
