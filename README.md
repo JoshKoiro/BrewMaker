@@ -3,7 +3,7 @@ Form Configuration client for the FormBrew Framework
 
 ## Description
 
-BrewMaker is part of the FormBrew framework. BrewMaker is a web-based tool designed to create and manage complex form structures with conditional logic. It allows users to define form groups, fields, and conditions that control the visibility and behavior of form elements. This tool is particularly useful for creating dynamic forms that adapt based on user input.
+BrewMaker is part of the [FormBrew Framework](https://github.com/JoshKoiro/FormBrew) . BrewMaker is a web-based tool designed to create and manage complex form structures with conditional logic. It allows users to define form groups, fields, and conditions that control the visibility and behavior of form elements. This tool is particularly useful for creating dynamic forms that adapt based on user input.
 
 ## Features
 
