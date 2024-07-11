@@ -15,7 +15,7 @@ function getFormConfig() {
             const fieldNameInput = rowEl.querySelector('td:nth-child(1) input');
             const fieldTypeSelect = rowEl.querySelector('td:nth-child(2) select');
             const requiredCheckbox = rowEl.querySelector('td:nth-child(3) input[type="checkbox"]');
-            const optionsInput = rowEl.querySelector('td:nth-child(4) input');
+            const optionsInput = rowEl.querySelector('td:nth-child(4) textarea') || rowEl.querySelector('td:nth-child(4) input');
 
             if (fieldNameInput && fieldTypeSelect) {
                 const fieldType = fieldTypeSelect.value;
@@ -38,9 +38,21 @@ function getFormConfig() {
 }
 
 function getOptions(fieldType, optionsInput) {
+    if (!optionsInput) {
+        console.warn('Options input is null or undefined');
+        return [];
+    }
+
     switch (fieldType) {
         case 'dropdown':
-            return optionsInput.value.split('\n').map(o => o.trim()).filter(o => o !== '');
+            if (optionsInput.tagName.toLowerCase() === 'textarea') {
+                return optionsInput.value.split('\n').map(o => o.trim()).filter(o => o !== '');
+            } else if (optionsInput.tagName.toLowerCase() === 'input') {
+                return optionsInput.value.split(',').map(o => o.trim()).filter(o => o !== '');
+            } else {
+                console.warn('Unexpected options input type:', optionsInput.tagName);
+                return [];
+            }
         case 'checkbox':
             return ['Yes', 'No'];
         default:
