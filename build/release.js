@@ -89,7 +89,7 @@ function updateVersionFile(versionType) {
 
   // Update version-check submodule before writing changes
   if(isGitEnabled) {
-    execCommand('git -C version-check pull origin main');
+    // execCommand('git -C version-check pull origin main');
   }
 
   // Update version.json content
