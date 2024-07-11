@@ -87,9 +87,8 @@ function addAction(conditionId) {
         <div class="flex-grow-1">
             <select class="form-select action-type">
                 <option value="removes">Removes</option>
-                <option value="shows">Shows</option>
-                <option value="hides">Hides</option>
                 <option value="requires">Requires</option>
+                <option value="shows">Shows</option>
             </select>
             <select class="form-select mt-2 action-category"></select>
             <div class="mt-2 action-values"></div>
