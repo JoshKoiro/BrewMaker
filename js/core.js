@@ -22,7 +22,7 @@ function createGroup() {
             <div>
                 <button class="btn btn-secondary btn-sm toggle-group me-2">Collapse</button>
                 <button class="btn btn-danger btn-sm delete-group">
-                <i class="material-symbols-outlined delete">delete</i>
+                <span class="material-symbols-outlined delete">delete</span>
                 </button>
             </div>
         </div>

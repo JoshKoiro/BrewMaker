@@ -16,8 +16,12 @@ function addCondition(name = '') {
         <div class="card-header d-flex justify-content-between align-items-center">
             <input type="text" class="form-control condition-name" placeholder="Condition Name (Optional)" value="${name}" style="width: auto;">
             <div>
-                <button class="btn btn-secondary btn-sm toggle-condition me-2">Collapse</button>
-                <button class="btn btn-danger btn-sm delete-condition">Delete</button>
+                <button class="btn btn-secondary btn-sm toggle-condition me-2">Collapse
+                <span class="material-symbols-outlined expand_circle_down">expand_circle_down</span>
+                </button>
+                <button class="btn btn-danger btn-sm delete-condition">
+                <span class="material-symbols-outlined delete">delete</span>
+                </button>
             </div>
         </div>
         <div class="card-body">
@@ -48,10 +52,10 @@ function toggleCondition(conditionElement) {
     const cardBody = conditionElement.querySelector('.card-body');
     if (cardBody.style.display === 'none') {
         cardBody.style.display = 'block';
-        button.textContent = 'Collapse';
+        button.innerHTML = '<span class="material-symbols-outlined expand_circle_up">expand_circle_up</span>';
     } else {
         cardBody.style.display = 'none';
-        button.textContent = 'Expand';
+        button.innerHTML = '<span class="material-symbols-outlined expand_circle_down">expand_circle_down</span>';
     }
 }
 
@@ -63,7 +67,9 @@ function addTrigger(conditionId) {
             <select class="form-select trigger-category"></select>
             <div class="mt-2 trigger-values"></div>
         </div>
-        <button class="btn btn-danger btn-sm ms-2 remove-trigger">Remove</button>
+        <button class="btn btn-danger btn-sm ms-2 remove-trigger">
+        <span class="material-symbols-outlined delete">delete</span>
+        </button>
     `;
 
     const condition = document.getElementById(conditionId);
@@ -88,7 +94,9 @@ function addAction(conditionId) {
             <select class="form-select mt-2 action-category"></select>
             <div class="mt-2 action-values"></div>
         </div>
-        <button class="btn btn-danger btn-sm ms-2 remove-action">Remove</button>
+        <button class="btn btn-danger btn-sm ms-2 remove-action">
+        <span class="material-symbols-outlined delete">delete</span>
+        </button>
     `;
 
     const condition = document.getElementById(conditionId);

@@ -184,7 +184,7 @@ function renderConfig(config) {
             const conditionToggleButton = conditionEl.querySelector('.toggle-condition');
             if (conditionCardBody && conditionToggleButton) {
                 conditionCardBody.style.display = 'none';
-                conditionToggleButton.textContent = 'Expand';
+                conditionToggleButton.innerHTML = '<span class="material-symbols-outlined expand_circle_down">expand_circle_down</span>';
             }
 
             condition.if.forEach((trigger, index) => {
