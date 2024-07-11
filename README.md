@@ -1,10 +1,15 @@
-<picture width="40%" align="right">
+<picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/JoshKoiro/BrewMaker/dev/img/logo-dark.png"> 
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/JoshKoiro/BrewMaker/dev/img/logo-light.png"> 
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/JoshKoiro/BrewMaker/dev/img/logo-light.png">
+    <img src="https://raw.githubusercontent.com/JoshKoiro/BrewMaker/dev/img/logo-dark.png" height="200px" align="right">
 </picture>
 
-<h1 align="left">BrewMaker</h1>
+<h1 align="left" style="border:none">BrewMaker</h1>
 Form Configuration client for the FormBrew Framework
+<br>
+<br>
+<br>
+<br>
 
 ## Description
 
