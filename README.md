@@ -5,7 +5,7 @@
 </picture>
 <br>
 <br>
-<h1 align="left" style="border:none!important;">BrewMaker</h1>
+<div align="left" style="font-size: 2em; padding-bottom: 0.3em;">BrewMaker</div>
 Form Configuration client for the FormBrew Framework
 <br>
 <br>
