@@ -23,6 +23,10 @@ function initializeEventListeners() {
         document.documentElement.setAttribute('data-bs-theme', 'dark');
         updateDarkModeButton(true);
     }
+
+    // load version number from version.js
+    const versionElement = document.getElementById('version');
+    versionElement.textContent = 'Version ' + window.version;
 }
 
 function toggleDarkMode() {
