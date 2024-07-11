@@ -1,5 +1,5 @@
 // SET THIS TO TRUE IF USING GIT
-const isGitEnabled = false;
+const isGitEnabled = true;
 
 const { execSync } = require('child_process');
 const { readFileSync, writeFileSync, appendFileSync } = require('fs');
@@ -36,6 +36,19 @@ function execCommand(command) {
     process.exit(1);
   }
 }
+
+  // Update package.json version
+  function updatePackageJsonVersion(newVersion) {
+    const packageJsonPath = path.join(__dirname, '../package.json');
+    const packageJsonContent = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+    if(!packageJsonContent){
+      logger.error('Error parsing package.json');
+      process.exit(1);
+    }
+    packageJsonContent.version = newVersion;
+    writeFileSync(packageJsonPath, JSON.stringify(packageJsonContent, null, 2), 'utf8');
+    logger.log(`Updated package.json version to ${newVersion}`);
+    }
 
 // Function to update the version in version.js and version.json
 function updateVersionFile(versionType) {
@@ -79,6 +92,9 @@ function updateVersionFile(versionType) {
     execCommand('git -C version-check pull origin main');
   }
 
+  // Update version.json content
+  updatePackageJsonVersion(newVersion);
+
   // Update version.json content in the version-check submodule
 //   const jsonFilePath = path.join(__dirname, '/version-check/bsscfg-version.json');
 //   const jsonContent = JSON.stringify({
@@ -87,7 +103,7 @@ function updateVersionFile(versionType) {
 //   writeFileSync(jsonFilePath, jsonContent, 'utf8');
 //   logger.log(`Updated version.json to version ${newVersion}`);
 
-//   return newVersion;
+  return newVersion;
 }
 
 // Prompt user for the version type
@@ -126,14 +142,14 @@ function askQuestion(query) {
       execCommand('git -c core.verbose=true pull origin dev');
 
       // Step 3: Add and commit the updated version.json in the submodule
-      execCommand('git -C version-check add -v bsscfg-version.json');
-      execCommand(`git -C version-check -c core.verbose=true commit -v -m "Update bsscfg.json to v${newVersion}"`);
-      execCommand('git -C version-check -c core.verbose=true push -v origin main');
+    //   execCommand('git -C version-check add -v bsscfg-version.json');
+    //   execCommand(`git -C version-check -c core.verbose=true commit -v -m "Update bsscfg.json to v${newVersion}"`);
+    //   execCommand('git -C version-check -c core.verbose=true push -v origin main');
 
       // Step 4: Update the submodule reference in the parent repository
-      execCommand('git add -v version-check');
-      execCommand(`git -c core.verbose=true commit -v -m "Update submodule version-check to latest commit"`);
-      execCommand('git -c core.verbose=true push -v origin dev');
+    //   execCommand('git add -v version-check');
+    //   execCommand(`git -c core.verbose=true commit -v -m "Update submodule version-check to latest commit"`);
+    //   execCommand('git -c core.verbose=true push -v origin dev');
 
       // Step 5: Add and commit the updated version.js and version.json
       execCommand('git add -v version.js');
