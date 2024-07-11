@@ -152,7 +152,7 @@ function askQuestion(query) {
     //   execCommand('git -c core.verbose=true push -v origin dev');
 
       // Step 5: Add and commit the updated version.js and version.json
-      execCommand('git add -v version.js');
+      execCommand('git add -v build/version.js');
       execCommand(`git -c core.verbose=true commit -v -m "Update version to v${newVersion}"`);
       execCommand('git -c core.verbose=true push -v origin dev');
 
