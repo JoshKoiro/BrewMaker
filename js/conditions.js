@@ -166,15 +166,22 @@ function updateValues(categorySelect, valuesContainer, isTrigger) {
 
 function getAllCategories() {
     const categories = [];
-    document.querySelectorAll('.card').forEach(groupEl => {
+    // Select only the form group cards, excluding condition cards
+    document.querySelectorAll('#groups .card').forEach(groupEl => {
         groupEl.querySelectorAll('tbody tr').forEach(rowEl => {
-            categories.push({
-                category: formatFieldName(rowEl.querySelector('td:nth-child(1) input').value),
-                type: rowEl.querySelector('td:nth-child(2) select').value,
-                options: rowEl.querySelector('td:nth-child(2) select').value === 'dropdown' 
-                    ? rowEl.querySelector('td:nth-child(4) input').value.split(',').map(o => o.trim()).filter(o => o !== '')
-                    : []
-            });
+            const fieldNameInput = rowEl.querySelector('td:nth-child(1) input');
+            const fieldTypeSelect = rowEl.querySelector('td:nth-child(2) select');
+            const optionsInput = rowEl.querySelector('td:nth-child(4) textarea');
+
+            if (fieldNameInput && fieldTypeSelect) {
+                categories.push({
+                    category: formatFieldName(fieldNameInput.value),
+                    type: fieldTypeSelect.value,
+                    options: fieldTypeSelect.value === 'dropdown' 
+                        ? optionsInput.value.split('\n').map(o => o.trim()).filter(o => o !== '')
+                        : []
+                });
+            }
         });
     });
     return categories;
