@@ -5,10 +5,13 @@
 </picture>
 <br>
 <br>
-<div align="left" style="font-size: 2em; padding-bottom: 0.3em;">BrewMaker</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<h1 align="left">BrewMaker</h1>
 Form Configuration client for the FormBrew Framework
-<br>
-<br>
 
 ## Description
 
