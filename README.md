@@ -1,6 +1,4 @@
 <img src="./img/header.jpg">
-<br>
-<br>
 <h1 align="left">BrewMaker</h1>
 Form Configuration client for the FormBrew Framework
 
