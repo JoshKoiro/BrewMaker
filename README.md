@@ -1,12 +1,4 @@
-<picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/JoshKoiro/BrewMaker/dev/img/logo-dark.png"> 
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/JoshKoiro/BrewMaker/dev/img/logo-light.png">
-    <img src="https://raw.githubusercontent.com/JoshKoiro/BrewMaker/dev/img/logo-dark.png" height="180px" align="right">
-</picture>
-<br>
-<br>
-<br>
-<br>
+<img src="./img/header.jpg">
 <br>
 <br>
 <h1 align="left">BrewMaker</h1>
@@ -66,6 +58,3 @@ Contributions to improve the Form Configuration Builder are welcome. Please foll
 2. Create a new branch for your feature or bug fix.
 3. Commit your changes with clear, descriptive commit messages.
 4. Push your branch and submit a pull request.
-
-<!-- <img src="https://raw.githubusercontent.com/JoshKoiro/BrewMaker/dev/img/logo-dark.png" width="40%" align="right">
-<img src="https://raw.githubusercontent.com/JoshKoiro/BrewMaker/dev/img/logo-light.png" width="40%" align="right"> -->
