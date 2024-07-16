@@ -5,7 +5,7 @@
   "main": "brewMaker.html",
   "scripts": {
     "release": "node build/release.js",
-    "docs": "./node_modules/.bin/jsdoc -c jsdoc.json",
+    "docs": "jsdoc -c jsdoc.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

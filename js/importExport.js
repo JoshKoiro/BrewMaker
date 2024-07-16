@@ -1,3 +1,13 @@
+/**
+ * @module importExport
+ * @description A module that handles the import and export of the form config from the dom to a .js or .json file.
+ */
+
+/**
+ * @func getFormConfig Gets the form config from the DOM.
+ * @returns {Object} The form config object.
+ */
+
 function getFormConfig() {
     const config = { 
         groups: [],
@@ -122,7 +132,11 @@ function formatJsObject(obj, indent = 0) {
     result += `${indentStr}}`;
     return result;
 }
-
+/**
+ * @func importConfig Imports a .js or .json file into the renderConfig function
+ * @param {string} file filepath to the .js or .json file to import into the renderConfig function
+ * @returns {void}
+ */
 function importConfig(file) {
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -139,6 +153,11 @@ function importConfig(file) {
     reader.readAsText(file);
 }
 
+/**
+ * @func renderConfig Renders the form config object to the DOM
+ * @param {Object} config The form config object
+ * @returns {void}
+ */
 function renderConfig(config) {
     groupsContainer.innerHTML = '';
     config.groups.forEach(group => {
@@ -229,6 +248,11 @@ function renderConfig(config) {
     }
 }
 
+/**
+ * Expose functions
+ * @type {{getFormConfig: getFormConfig, exportConfig: exportConfig, importConfig: importConfig, renderConfig: renderConfig}}
+ * @description Exposes the getFormConfig, exportConfig, importConfig, and renderConfig functions.
+ */
 // Expose necessary functions
 window.getFormConfig = getFormConfig;
 window.exportConfig = exportConfig;

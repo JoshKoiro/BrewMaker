@@ -1,12 +1,27 @@
+/**
+ * @module dragDrop
+ * @description A module that handles the drag and drop functionality of the form.
+ */
+
 let draggingElement = null;
 let dropTarget = null;
 let isDraggingGroup = false;
 
+/**
+ * @func setupDragAndDrop Sets up the drag and drop functionality for the given element.
+ * @param {HTMLElement} element The element to setup the drag and drop functionality for.
+ * @returns {void} This function does not return anything.
+ */
 function setupDragAndDrop(element) {
     element.addEventListener('dragstart', dragStart);
     element.addEventListener('dragend', dragEnd);
 }
 
+/**
+ * @func dragStart Handles the drag start event.
+ * @param {HTMLElement} e The element that is being dragged.
+ * @returns {void} This function does not return anything.
+ */
 function dragStart(e) {
     draggingElement = e.target.closest('.draggable');
     isDraggingGroup = draggingElement.classList.contains('card');
@@ -15,6 +30,11 @@ function dragStart(e) {
     setTimeout(() => draggingElement.classList.add('dragging'), 0);
 }
 
+/**
+ * @func dragEnd Handles the drag end event. This function determines the drop target and rearranges the groups or fields accordingly.
+ * @param {HTMLElement} e The element that is being dragged.
+ * @returns {void} This function does not return anything.
+ */
 function dragEnd(e) {
     if (draggingElement && dropTarget) {
         if (isDraggingGroup) {
@@ -33,6 +53,10 @@ function dragEnd(e) {
     clearDragOverStyles();
 }
 
+/**
+ * @func rearrangeGroups Rearranges the groups in the groups container. This function is called when a group is dragged over another group.
+ * @returns {void} This function does not return anything.
+ */
 function rearrangeGroups() {
     const rect = dropTarget.getBoundingClientRect();
     const dropY = rect.top + rect.height / 2;
@@ -43,6 +67,10 @@ function rearrangeGroups() {
     }
 }
 
+/**
+ * @func rearrangeFields Rearranges the fields in the groups container. This function is called when a field is dragged over another field.
+ * @returns {void} This function does not return anything.
+ */
 function rearrangeFields() {
     const sourceTable = draggingElement.closest('tbody');
     const targetTable = dropTarget.closest('tbody');
@@ -60,12 +88,21 @@ function rearrangeFields() {
     }
 }
 
+/**
+ * @func clearDragOverStyles Clears the drag over styles of the groups and fields. This function is called when the drag ends.
+ * @returns {void} This function does not return anything.
+ */
 function clearDragOverStyles() {
     document.querySelectorAll('.drag-over-group, .drag-over-field').forEach(el => {
         el.classList.remove('drag-over-group', 'drag-over-field');
     });
 }
 
+/**
+ * @func getClosestDraggableElement Returns the closest draggable element to the given clientY position.
+ * @param {number} clientY The clientY position of the mouse cursor.
+ * @returns {HTMLElement} The closest draggable element to the given clientY position.
+ */
 function getClosestDraggableElement(clientY) {
     const draggableElements = [...document.querySelectorAll('.draggable:not(.dragging)')];
     return draggableElements.reduce((closest, element) => {
@@ -85,6 +122,7 @@ function getClosestDraggableElement(clientY) {
     }, { offset: Number.POSITIVE_INFINITY }).element;
 }
 
+//** Drag and Drop Events */
 document.addEventListener('dragover', (e) => {
     e.preventDefault();
     if (!draggingElement) return;

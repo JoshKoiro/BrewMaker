@@ -1,6 +1,14 @@
+/**
+ * @module core
+ * @description A module that handles the creation and display of groups and fields that get applied to the form structure.
+ */
+
 let groupCounter = 0;
 let fieldCounter = 0;
-
+/**
+ * @func createGroup Creates a new group element and adds it to the DOM.
+ * @return {void} This function does not return anything.
+ */
 function createGroup() {
     const groupId = `group_${groupCounter++}`;
     const group = document.createElement('div');
@@ -64,7 +72,11 @@ function toggleGroup(e, group) {
         button.innerHTML = '<span class="material-symbols-outlined expand_circle_down">expand_circle_down</span>';
     }
 }
-
+/**
+ * @func createField Creates a new field element within a group and adds it to the DOM.
+ * @param {HTMLElement} group the group element to add the field to
+ * @return {void} This function does not return anything.
+ */
 function createField(group) {
     const fieldId = `field_${fieldCounter++}`;
     const row = document.createElement('tr');

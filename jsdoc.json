@@ -1,11 +1,6 @@
 {
     "source": {
-        "include": [
-            "js/**/*.js"
-        ],
-        "includePattern": [
-            ".js$"
-        ],
+        "include": ["./js"],
         "excludePattern": "(node_modules/|docs)"
     },
     "plugins": [
@@ -14,14 +9,14 @@
     "opts": {
         "template": "node_modules/clean-jsdoc-theme",
         "theme_opts": {
-            "default_theme": "dark"
+            "default_theme": "dark",
+            "includeFilesListInHomepage": true
         },
         "encoding": "utf8",
         "destination": "docs/",
         "recurse": true,
         "verbose": true,
-        "readme": "./README.md",
-        "tutorials": "./docs/tutorials/"
+        "readme": "./README.md"
     },
     "markdown": {
         "hardwrap": false,

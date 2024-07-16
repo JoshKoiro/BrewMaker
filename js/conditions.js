@@ -1,12 +1,28 @@
+/**
+ * @module conditions
+ * @description A module that handles the creation and display of conditions that get applied to the form structure elements.
+ */
+
 let conditionsContainer;
 let addConditionBtn;
 
+/**
+ * @func initializeConditions Initializes the conditions by retrieving the conditions container and the add condition button,
+ * and adding a click event listener to the add condition button to call the addCondition function.
+ *
+ * @return {void} This function does not return anything.
+ */
 function initializeConditions() {
     conditionsContainer = document.getElementById('conditions');
     addConditionBtn = document.getElementById('addCondition');
     addConditionBtn.addEventListener('click', addCondition);
 }
-
+/**
+ * @func addCondition Adds a condition to the conditions container.
+ * @param {string} name the name of the condition (optional, and is only for the users benifit)
+ * @return {void} This function does not return anything.
+ * @example addCondition('lastNameCheck') // adds a condition to the conditions container with the name 'lastNameCheck'
+ */
 function addCondition(name = '') {
     const conditionId = `condition_${Date.now()}`;
     const conditionElement = document.createElement('div');
