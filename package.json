@@ -5,6 +5,7 @@
   "main": "brewMaker.html",
   "scripts": {
     "release": "node build/release.js",
+    "docs": "./node_modules/.bin/jsdoc -c jsdoc.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -12,5 +13,9 @@
     "url": "git+https://github.com/JoshKoiro/BrewMaker"
   },
   "author": "Josh Koiro",
-  "license": "GPL-3.0-only"
+  "license": "GPL-3.0-only",
+  "devDependencies": {
+    "clean-jsdoc-theme": "^4.3.0",
+    "jsdoc": "^4.0.3"
+  }
 }
