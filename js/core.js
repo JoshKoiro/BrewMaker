@@ -76,6 +76,7 @@ function createField(group) {
         <td>
             <select class="form-control field-type">
                 <option value="text">Text</option>
+                <option value="textarea">Textarea</option>
                 <option value="number">Number</option>
                 <option value="date">Date</option>
                 <option value="dropdown">Dropdown</option>
