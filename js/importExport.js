@@ -190,6 +190,7 @@ function renderConfig(config) {
             } else {
                 optionsInput.style.display = 'none';
             }
+            rowEl.querySelector('td:nth-child(5) textarea').value = category.description;
         });
     });
 
