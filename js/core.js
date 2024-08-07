@@ -42,6 +42,7 @@ function createGroup() {
                         <th>Field Type</th>
                         <th>Required</th>
                         <th>Options</th>
+                        <th>Description</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -99,9 +100,14 @@ function createField(group) {
         </td>
         <td><input type="checkbox"></td>
         <td><textarea class="form-control options-input" placeholder="Options (one per line)" style="display: none;"></textarea></td>
+        <td><textarea class="form-control description-input" placeholder="Description"></textarea></td>
         <td><button class="btn btn-danger btn-sm delete-field">
         <i class="material-symbols-outlined delete">delete</i>
-        </button></td>
+        </button>
+        <button class="btn btn-primary btn-sm" disabled>
+        <i class="material-symbols-outlined">quick_reference</i>
+        </button>
+        </td>
     `;
 
     row.querySelector('.delete-field').addEventListener('click', () => row.remove());

@@ -26,6 +26,7 @@ function getFormConfig() {
             const fieldTypeSelect = rowEl.querySelector('td:nth-child(2) select');
             const requiredCheckbox = rowEl.querySelector('td:nth-child(3) input[type="checkbox"]');
             const optionsInput = rowEl.querySelector('td:nth-child(4) textarea') || rowEl.querySelector('td:nth-child(4) input');
+            const description = rowEl.querySelector('td:nth-child(5) textarea');
 
             if (fieldNameInput && fieldTypeSelect) {
                 const fieldType = fieldTypeSelect.value;
@@ -33,7 +34,8 @@ function getFormConfig() {
                     category: formatFieldName(fieldNameInput.value),
                     type: fieldType,
                     required: requiredCheckbox ? requiredCheckbox.checked : false,
-                    options: getOptions(fieldType, optionsInput)
+                    options: getOptions(fieldType, optionsInput),
+                    description: description ? description.value : ''
                 };
                 group.categories.push(category);
             }
