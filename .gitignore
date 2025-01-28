@@ -2,3 +2,5 @@
 node_modules
 /dist
 /docs
+package-lock.json
+combined_output.md

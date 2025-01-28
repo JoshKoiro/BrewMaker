@@ -1,0 +1,7 @@
+/node_modules
+/img
+/build
+/docs
+package-lock.json
+combined_output.md
+LICENSE

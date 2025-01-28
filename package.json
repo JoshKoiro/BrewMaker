@@ -5,6 +5,7 @@
   "main": "brewMaker.html",
   "scripts": {
     "release": "node build/release.js",
+    "yeet": "node node_modules/code-context-yeeter/yeetCode.js",
     "docs": "jsdoc -c jsdoc.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,5 +18,8 @@
   "devDependencies": {
     "clean-jsdoc-theme": "^4.3.0",
     "jsdoc": "^4.0.3"
+  },
+  "dependencies": {
+    "code-context-yeeter": "github:JoshKoiro/code-context-yeeter"
   }
 }
