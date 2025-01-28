@@ -25,22 +25,23 @@ function getFormConfig() {
             const fieldNameInput = rowEl.querySelector('td:nth-child(1) input');
             const fieldTypeSelect = rowEl.querySelector('td:nth-child(2) select');
             const requiredCheckbox = rowEl.querySelector('td:nth-child(3) input[type="checkbox"]');
-            const optionsInput = rowEl.querySelector('td:nth-child(4) textarea') || rowEl.querySelector('td:nth-child(4) input');
-            const description = rowEl.querySelector('td:nth-child(5) textarea');
-
+            const optionalCheckbox = rowEl.querySelector('td:nth-child(4) input[type="checkbox"]');
+            const listItemInput = rowEl.querySelector('td:nth-child(5) textarea') || rowEl.querySelector('td:nth-child(5) input');
+            const description = rowEl.querySelector('td:nth-child(6) textarea');
+        
             if (fieldNameInput && fieldTypeSelect) {
                 const fieldType = fieldTypeSelect.value;
                 const category = {
                     category: formatFieldName(fieldNameInput.value),
                     type: fieldType,
                     required: requiredCheckbox ? requiredCheckbox.checked : false,
-                    options: getOptions(fieldType, optionsInput),
+                    optional: optionalCheckbox ? optionalCheckbox.checked : false,
+                    options: getOptions(fieldType, listItemInput),
                     description: description ? description.value : ''
                 };
                 group.categories.push(category);
             }
         });
-
         config.groups.push(group);
     });
 
@@ -49,20 +50,20 @@ function getFormConfig() {
     return config;
 }
 
-function getOptions(fieldType, optionsInput) {
-    if (!optionsInput) {
+function getOptions(fieldType, listItemInput) {
+    if (!listItemInput) {
         console.warn('Options input is null or undefined');
         return [];
     }
 
     switch (fieldType) {
         case 'dropdown':
-            if (optionsInput.tagName.toLowerCase() === 'textarea') {
-                return optionsInput.value.split('\n').map(o => o.trim()).filter(o => o !== '');
-            } else if (optionsInput.tagName.toLowerCase() === 'input') {
-                return optionsInput.value.split(',').map(o => o.trim()).filter(o => o !== '');
+            if (listItemInput.tagName.toLowerCase() === 'textarea') {
+                return listItemInput.value.split('\n').map(o => o.trim()).filter(o => o !== '');
+            } else if (listItemInput.tagName.toLowerCase() === 'input') {
+                return listItemInput.value.split(',').map(o => o.trim()).filter(o => o !== '');
             } else {
-                console.warn('Unexpected options input type:', optionsInput.tagName);
+                console.warn('Unexpected options input type:', listItemInput.tagName);
                 return [];
             }
         case 'checkbox':
@@ -183,14 +184,15 @@ function renderConfig(config) {
             const fieldTypeSelect = rowEl.querySelector('td:nth-child(2) select');
             fieldTypeSelect.value = category.type;
             rowEl.querySelector('td:nth-child(3) input[type="checkbox"]').checked = category.required;
-            const optionsInput = rowEl.querySelector('td:nth-child(4) textarea');
+            rowEl.querySelector('td:nth-child(4) input[type="checkbox"]').checked = category.optional || false;
+            const listItemInput = rowEl.querySelector('td:nth-child(5) textarea');
             if (category.type === 'dropdown') {
-                optionsInput.value = category.options.join('\n');
-                optionsInput.style.display = 'block';
+                listItemInput.value = category.options.join('\n');
+                listItemInput.style.display = 'block';
             } else {
-                optionsInput.style.display = 'none';
+                listItemInput.style.display = 'none';
             }
-            rowEl.querySelector('td:nth-child(5) textarea').value = category.description;
+            rowEl.querySelector('td:nth-child(6) textarea').value = category.description;
         });
     });
 

@@ -7,22 +7,14 @@ let conditionsContainer;
 let addConditionBtn;
 
 /**
- * @func initializeConditions Initializes the conditions by retrieving the conditions container and the add condition button,
- * and adding a click event listener to the add condition button to call the addCondition function.
- *
- * @return {void} This function does not return anything.
+ * @func initializeConditions
  */
 function initializeConditions() {
     conditionsContainer = document.getElementById('conditions');
     addConditionBtn = document.getElementById('addCondition');
     addConditionBtn.addEventListener('click', addCondition);
 }
-/**
- * @func addCondition Adds a condition to the conditions container.
- * @param {string} name the name of the condition (optional, and is only for the users benifit)
- * @return {void} This function does not return anything.
- * @example addCondition('lastNameCheck') // adds a condition to the conditions container with the name 'lastNameCheck'
- */
+
 function addCondition(name = '') {
     const conditionId = `condition_${Date.now()}`;
     const conditionElement = document.createElement('div');
@@ -54,7 +46,7 @@ function addCondition(name = '') {
     conditionElement.querySelector('.delete-condition').addEventListener('click', () => conditionElement.remove());
     conditionElement.querySelector('.add-trigger').addEventListener('click', () => addTrigger(conditionId));
     conditionElement.querySelector('.add-action').addEventListener('click', () => addAction(conditionId));
-    conditionElement.querySelector('.toggle-condition').addEventListener('click', (e) => toggleCondition(conditionElement));
+    conditionElement.querySelector('.toggle-condition').addEventListener('click', () => toggleCondition(conditionElement));
     
     conditionElement.querySelector('.card-header').addEventListener('dblclick', () => toggleCondition(conditionElement));
 
@@ -89,11 +81,21 @@ function addTrigger(conditionId) {
     `;
 
     const condition = document.getElementById(conditionId);
-    condition.querySelector('.condition-triggers').appendChild(triggerElement);
-
-    populateCategoryDropdown(triggerElement.querySelector('.trigger-category'));
-    triggerElement.querySelector('.trigger-category').addEventListener('change', (e) => updateTriggerValues(e.target));
-    triggerElement.querySelector('.remove-trigger').addEventListener('click', () => triggerElement.remove());
+    if (condition) {
+        const triggersContainer = condition.querySelector('.condition-triggers');
+        if (triggersContainer) {
+            triggersContainer.appendChild(triggerElement);
+            const categorySelect = triggerElement.querySelector('.trigger-category');
+            if (categorySelect) {
+                populateCategoryDropdown(categorySelect);
+                categorySelect.addEventListener('change', (e) => updateTriggerValues(e.target));
+            }
+            const removeButton = triggerElement.querySelector('.remove-trigger');
+            if (removeButton) {
+                removeButton.addEventListener('click', () => triggerElement.remove());
+            }
+        }
+    }
 }
 
 function addAction(conditionId) {
@@ -115,36 +117,60 @@ function addAction(conditionId) {
     `;
 
     const condition = document.getElementById(conditionId);
-    condition.querySelector('.condition-actions').appendChild(actionElement);
-
-    populateCategoryDropdown(actionElement.querySelector('.action-category'));
-    actionElement.querySelector('.action-category').addEventListener('change', (e) => updateActionValues(e.target));
-    actionElement.querySelector('.remove-action').addEventListener('click', () => actionElement.remove());
+    if (condition) {
+        const actionsContainer = condition.querySelector('.condition-actions');
+        if (actionsContainer) {
+            actionsContainer.appendChild(actionElement);
+            const categorySelect = actionElement.querySelector('.action-category');
+            if (categorySelect) {
+                populateCategoryDropdown(categorySelect);
+                categorySelect.addEventListener('change', (e) => updateActionValues(e.target));
+            }
+            const removeButton = actionElement.querySelector('.remove-action');
+            if (removeButton) {
+                removeButton.addEventListener('click', () => actionElement.remove());
+            }
+        }
+    }
 }
 
 function populateCategoryDropdown(selectElement) {
+    if (!selectElement) return;
+    
     const categories = getAllCategories();
     selectElement.innerHTML = '<option value="">Select a category</option>';
     categories.forEach(category => {
-        const option = document.createElement('option');
-        option.value = category.category;
-        option.textContent = category.category;
-        selectElement.appendChild(option);
+        if (category && category.category) {
+            const option = document.createElement('option');
+            option.value = category.category;
+            option.textContent = category.category;
+            selectElement.appendChild(option);
+        }
     });
 }
 
 function updateTriggerValues(categorySelect) {
+    if (!categorySelect) return;
     const valuesContainer = categorySelect.parentElement.querySelector('.trigger-values');
-    updateValues(categorySelect, valuesContainer, true);
+    if (valuesContainer) {
+        updateValues(categorySelect, valuesContainer, true);
+    }
 }
 
 function updateActionValues(categorySelect) {
+    if (!categorySelect) return;
     const valuesContainer = categorySelect.parentElement.querySelector('.action-values');
-    updateValues(categorySelect, valuesContainer, false);
+    if (valuesContainer) {
+        updateValues(categorySelect, valuesContainer, false);
+    }
 }
 
 function updateValues(categorySelect, valuesContainer, isTrigger) {
-    const category = getAllCategories().find(cat => cat.category === categorySelect.value);
+    if (!categorySelect || !valuesContainer) return;
+
+    const category = getAllCategories().find(cat => cat && cat.category === categorySelect.value);
+    if (!category) return;
+
     valuesContainer.innerHTML = '';
 
     if (category.type === 'dropdown') {
@@ -189,24 +215,28 @@ function updateValues(categorySelect, valuesContainer, isTrigger) {
 
 function getAllCategories() {
     const categories = [];
-    // Select only the form group cards, excluding condition cards
-    document.querySelectorAll('#groups .card').forEach(groupEl => {
-        groupEl.querySelectorAll('tbody tr').forEach(rowEl => {
+    const groupElements = document.querySelectorAll('#groups .card');
+    
+    groupElements.forEach(groupEl => {
+        const rows = groupEl.querySelectorAll('tbody tr');
+        rows.forEach(rowEl => {
             const fieldNameInput = rowEl.querySelector('td:nth-child(1) input');
             const fieldTypeSelect = rowEl.querySelector('td:nth-child(2) select');
-            const optionsInput = rowEl.querySelector('td:nth-child(4) textarea');
+            const listItemInput = rowEl.querySelector('td:nth-child(4) textarea');
 
-            if (fieldNameInput && fieldTypeSelect) {
-                categories.push({
+            if (fieldNameInput && fieldTypeSelect && fieldNameInput.value) {
+                const category = {
                     category: formatFieldName(fieldNameInput.value),
                     type: fieldTypeSelect.value,
-                    options: fieldTypeSelect.value === 'dropdown' 
-                        ? optionsInput.value.split('\n').map(o => o.trim()).filter(o => o !== '')
+                    options: fieldTypeSelect.value === 'dropdown' && listItemInput 
+                        ? listItemInput.value.split('\n').map(o => o.trim()).filter(o => o !== '')
                         : []
-                });
+                };
+                categories.push(category);
             }
         });
     });
+    
     return categories;
 }
 
@@ -214,35 +244,49 @@ function getConditionsConfig() {
     const conditions = [];
     document.querySelectorAll('#conditions .card').forEach(conditionEl => {
         const condition = {
-            name: conditionEl.querySelector('.condition-name').value,
+            name: conditionEl.querySelector('.condition-name')?.value || '',
             if: [],
             then: []
         };
 
         conditionEl.querySelectorAll('.condition-triggers > div').forEach(triggerEl => {
-            const category = triggerEl.querySelector('.trigger-category').value;
+            const categorySelect = triggerEl.querySelector('.trigger-category');
             const valuesElement = triggerEl.querySelector('.trigger-values > *');
-            const values = valuesElement.tagName === 'SELECT' 
-                ? Array.from(valuesElement.selectedOptions).map(opt => opt.value)
-                : valuesElement.value.split(',').map(v => v.trim());
+            
+            if (categorySelect && categorySelect.value && valuesElement) {
+                const values = valuesElement.tagName === 'SELECT' 
+                    ? Array.from(valuesElement.selectedOptions).map(opt => opt.value)
+                    : valuesElement.value.split(',').map(v => v.trim());
 
-            condition.if.push({ category, values });
+                condition.if.push({ 
+                    category: categorySelect.value, 
+                    values 
+                });
+            }
         });
 
         conditionEl.querySelectorAll('.condition-actions > div').forEach(actionEl => {
-            const type = actionEl.querySelector('.action-type').value;
-            const category = actionEl.querySelector('.action-category').value;
+            const typeSelect = actionEl.querySelector('.action-type');
+            const categorySelect = actionEl.querySelector('.action-category');
             const valuesElement = actionEl.querySelector('.action-values > *:first-child');
-            const applyToWholeCategory = actionEl.querySelector('.action-values input[type="checkbox"]').checked;
+            const wholeCategoryCheckbox = actionEl.querySelector('.action-values input[type="checkbox"]');
+            
+            if (typeSelect && categorySelect && categorySelect.value) {
+                const action = {
+                    type: typeSelect.value,
+                    category: categorySelect.value,
+                    values: [],
+                    applyToWholeCategory: wholeCategoryCheckbox?.checked || false
+                };
 
-            let values = [];
-            if (!applyToWholeCategory) {
-                values = valuesElement.tagName === 'SELECT' 
-                    ? Array.from(valuesElement.selectedOptions).map(opt => opt.value)
-                    : valuesElement.value.split(',').map(v => v.trim());
+                if (!action.applyToWholeCategory && valuesElement) {
+                    action.values = valuesElement.tagName === 'SELECT' 
+                        ? Array.from(valuesElement.selectedOptions).map(opt => opt.value)
+                        : valuesElement.value.split(',').map(v => v.trim());
+                }
+
+                condition.then.push(action);
             }
-
-            condition.then.push({ type, category, values, applyToWholeCategory });
         });
 
         conditions.push(condition);

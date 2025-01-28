@@ -37,15 +37,16 @@ function createGroup() {
         <div class="card-body">
             <table class="table">
                 <thead>
-                    <tr>
-                        <th>Field Name</th>
-                        <th>Field Type</th>
-                        <th>Required</th>
-                        <th>Options</th>
-                        <th>Description</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
+    <tr>
+        <th>Field Name</th>
+        <th>Field Type</th>
+        <th>Required</th>
+        <th>Optional</th>
+        <th>List Items</th>
+        <th>Description</th>
+        <th>Actions</th>
+    </tr>
+</thead>
                 <tbody></tbody>
             </table>
             <button class="btn btn-secondary btn-sm add-field">Add Field</button>
@@ -55,7 +56,7 @@ function createGroup() {
     group.querySelector('.delete-group').addEventListener('click', () => group.remove());
     group.querySelector('.add-field').addEventListener('click', () => createField(group));
     group.querySelector('.toggle-group').addEventListener('click', (e) => toggleGroup(e, group));
-    
+
     group.querySelector('.card-header').addEventListener('dblclick', (e) => toggleGroup(e, group));
 
     groupsContainer.appendChild(group);
@@ -85,40 +86,41 @@ function createField(group) {
     row.draggable = true;
     row.id = fieldId;
     row.innerHTML = `
-        <td><input type="text" class="form-control" placeholder="Field Name"></td>
-        <td>
-            <select class="form-control field-type">
-                <option value="text">Text</option>
-                <option value="textarea">Textarea</option>
-                <option value="number">Number</option>
-                <option value="date">Date</option>
-                <option value="dropdown">Dropdown</option>
-                <option value="checkbox">Checkbox</option>
-                <option value="phone">Phone</option>
-                <option value="email">Email</option>
-            </select>
-        </td>
-        <td><input type="checkbox"></td>
-        <td><textarea class="form-control options-input" placeholder="Options (one per line)" style="display: none;"></textarea></td>
-        <td><textarea class="form-control description-input" placeholder="Description"></textarea></td>
-        <td><button class="btn btn-danger btn-sm delete-field">
-        <i class="material-symbols-outlined delete">delete</i>
-        </button>
-        <button class="btn btn-primary btn-sm" disabled>
-        <i class="material-symbols-outlined">quick_reference</i>
-        </button>
-        </td>
-    `;
+    <td><input type="text" class="form-control" placeholder="Field Name"></td>
+    <td>
+        <select class="form-control field-type">
+            <option value="text">Text</option>
+            <option value="textarea">Textarea</option>
+            <option value="number">Number</option>
+            <option value="date">Date</option>
+            <option value="dropdown">Dropdown</option>
+            <option value="checkbox">Checkbox</option>
+            <option value="phone">Phone</option>
+            <option value="email">Email</option>
+        </select>
+    </td>
+    <td><input type="checkbox"></td>
+    <td><input type="checkbox"></td>
+    <td><textarea class="form-control options-input" placeholder="Options (one per line)" style="display: none;"></textarea></td>
+    <td><textarea class="form-control description-input" placeholder="Description"></textarea></td>
+    <td><button class="btn btn-danger btn-sm delete-field">
+    <i class="material-symbols-outlined delete">delete</i>
+    </button>
+    <button class="btn btn-primary btn-sm" disabled>
+    <i class="material-symbols-outlined">quick_reference</i>
+    </button>
+    </td>
+`;
 
     row.querySelector('.delete-field').addEventListener('click', () => row.remove());
-    row.querySelector('.field-type').addEventListener('change', (e) => toggleOptionsInput(e.target));
+    row.querySelector('.field-type').addEventListener('change', (e) => togglelistItemInput(e.target));
     group.querySelector('tbody').appendChild(row);
     setupDragAndDrop(row);
 }
 
-function toggleOptionsInput(selectElement) {
-    const optionsInput = selectElement.closest('tr').querySelector('.options-input');
-    optionsInput.style.display = selectElement.value === 'dropdown' ? 'block' : 'none';
+function togglelistItemInput(selectElement) {
+    const listItemInput = selectElement.closest('tr').querySelector('.options-input');
+    listItemInput.style.display = selectElement.value === 'dropdown' ? 'block' : 'none';
 }
 
 function formatFieldName(name) {
@@ -130,5 +132,5 @@ function formatFieldName(name) {
 window.createGroup = createGroup;
 window.createField = createField;
 window.toggleGroup = toggleGroup;
-window.toggleOptionsInput = toggleOptionsInput;
+window.togglelistItemInput = togglelistItemInput;
 window.formatFieldName = formatFieldName;
