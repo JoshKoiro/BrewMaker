@@ -172,7 +172,7 @@ function updateValues(categorySelect, valuesContainer, isTrigger) {
     if (!category) return;
 
     valuesContainer.innerHTML = '';
-
+    
     if (category.type === 'dropdown') {
         const select = document.createElement('select');
         select.className = 'form-select';
@@ -213,6 +213,25 @@ function updateValues(categorySelect, valuesContainer, isTrigger) {
     }
 }
 
+function waitForElement(selector, parent, timeout = 1000) {
+    return new Promise((resolve, reject) => {
+        const startTime = Date.now();
+        
+        function checkElement() {
+            const element = parent.querySelector(selector);
+            if (element) {
+                resolve(element);
+            } else if (Date.now() - startTime >= timeout) {
+                reject(new Error('Element not found'));
+            } else {
+                setTimeout(checkElement, 50);
+            }
+        }
+        
+        checkElement();
+    });
+}
+
 function getAllCategories() {
     const categories = [];
     const groupElements = document.querySelectorAll('#groups .card');
@@ -222,7 +241,7 @@ function getAllCategories() {
         rows.forEach(rowEl => {
             const fieldNameInput = rowEl.querySelector('td:nth-child(1) input');
             const fieldTypeSelect = rowEl.querySelector('td:nth-child(2) select');
-            const listItemInput = rowEl.querySelector('td:nth-child(4) textarea');
+            const listItemInput = rowEl.querySelector('td:nth-child(5) textarea');
 
             if (fieldNameInput && fieldTypeSelect && fieldNameInput.value) {
                 const category = {
@@ -249,29 +268,38 @@ function getConditionsConfig() {
             then: []
         };
 
+        // Handle triggers
         conditionEl.querySelectorAll('.condition-triggers > div').forEach(triggerEl => {
             const categorySelect = triggerEl.querySelector('.trigger-category');
             const valuesElement = triggerEl.querySelector('.trigger-values > *');
             
-            if (categorySelect && categorySelect.value && valuesElement) {
-                const values = valuesElement.tagName === 'SELECT' 
-                    ? Array.from(valuesElement.selectedOptions).map(opt => opt.value)
-                    : valuesElement.value.split(',').map(v => v.trim());
+            if (categorySelect?.value) {
+                let values = [];
+                if (valuesElement) {
+                    if (valuesElement.tagName === 'SELECT') {
+                        values = Array.from(valuesElement.selectedOptions).map(opt => opt.value);
+                    } else if (valuesElement.type === 'checkbox') {
+                        values = [valuesElement.checked ? 'Yes' : 'No'];
+                    } else {
+                        values = valuesElement.value.split(',').map(v => v.trim()).filter(v => v);
+                    }
+                }
 
-                condition.if.push({ 
-                    category: categorySelect.value, 
-                    values 
+                condition.if.push({
+                    category: categorySelect.value,
+                    values: values
                 });
             }
         });
 
+        // Handle actions
         conditionEl.querySelectorAll('.condition-actions > div').forEach(actionEl => {
             const typeSelect = actionEl.querySelector('.action-type');
             const categorySelect = actionEl.querySelector('.action-category');
             const valuesElement = actionEl.querySelector('.action-values > *:first-child');
             const wholeCategoryCheckbox = actionEl.querySelector('.action-values input[type="checkbox"]');
             
-            if (typeSelect && categorySelect && categorySelect.value) {
+            if (typeSelect?.value && categorySelect?.value) {
                 const action = {
                     type: typeSelect.value,
                     category: categorySelect.value,
@@ -280,9 +308,13 @@ function getConditionsConfig() {
                 };
 
                 if (!action.applyToWholeCategory && valuesElement) {
-                    action.values = valuesElement.tagName === 'SELECT' 
-                        ? Array.from(valuesElement.selectedOptions).map(opt => opt.value)
-                        : valuesElement.value.split(',').map(v => v.trim());
+                    if (valuesElement.tagName === 'SELECT') {
+                        action.values = Array.from(valuesElement.selectedOptions).map(opt => opt.value);
+                    } else if (valuesElement.type === 'checkbox') {
+                        action.values = [valuesElement.checked ? 'Yes' : 'No'];
+                    } else {
+                        action.values = valuesElement.value.split(',').map(v => v.trim()).filter(v => v);
+                    }
                 }
 
                 condition.then.push(action);
@@ -293,6 +325,157 @@ function getConditionsConfig() {
     });
 
     return conditions;
+}
+
+function renderConfig(config) {
+    groupsContainer.innerHTML = '';
+    config.groups.forEach(group => {
+        createGroup();
+        const groupEl = groupsContainer.lastElementChild;
+        groupEl.querySelector('.card-header input[placeholder="Group Heading"]').value = group.heading;
+        groupEl.querySelector('.card-header input[placeholder="Icon Name"]').value = group.icon;
+
+        // Collapse the group
+        const cardBody = groupEl.querySelector('.card-body');
+        const toggleButton = groupEl.querySelector('.toggle-group');
+        if (cardBody && toggleButton) {
+            cardBody.style.display = 'none';
+            toggleButton.innerHTML = '<span class="material-symbols-outlined">expand_circle_down</span>'
+        }
+
+        group.categories.forEach(category => {
+            createField(groupEl);
+            const rowEl = groupEl.querySelector('tbody tr:last-child');
+            rowEl.querySelector('td:nth-child(1) input').value = category.category;
+            const fieldTypeSelect = rowEl.querySelector('td:nth-child(2) select');
+            fieldTypeSelect.value = category.type;
+            rowEl.querySelector('td:nth-child(3) input[type="checkbox"]').checked = category.required;
+            rowEl.querySelector('td:nth-child(4) input[type="checkbox"]').checked = category.optional || false;
+            const listItemInput = rowEl.querySelector('td:nth-child(5) textarea');
+            if (category.type === 'dropdown') {
+                listItemInput.value = category.options.join('\n');
+                listItemInput.style.display = 'block';
+            } else {
+                listItemInput.style.display = 'none';
+            }
+            rowEl.querySelector('td:nth-child(6) textarea').value = category.description;
+        });
+    });
+
+    // Clear existing conditions
+    conditionsContainer.innerHTML = '';
+    
+    // Handle conditions
+    if (config.conditions) {
+        const renderConditions = async () => {
+            for (const condition of config.conditions) {
+                // Create condition
+                addCondition(condition.name || '');
+                const conditionEl = conditionsContainer.lastElementChild;
+                
+                // Handle triggers ("if" conditions)
+                for (let i = 0; i < condition.if.length; i++) {
+                    const trigger = condition.if[i];
+                    
+                    if (i > 0) {
+                        addTrigger(conditionEl.id);
+                    }
+                    
+                    const triggerEl = conditionEl.querySelectorAll('.condition-triggers > div')[i];
+                    const categorySelect = triggerEl.querySelector('.trigger-category');
+                    
+                    // Set category and trigger change event
+                    categorySelect.value = trigger.category;
+                    categorySelect.dispatchEvent(new Event('change'));
+                    
+                    try {
+                        // Wait for values container to be populated
+                        const valuesElement = await waitForElement('.trigger-values > *', triggerEl);
+                        
+                        // Set the values
+                        if (valuesElement.tagName === 'SELECT') {
+                            // For dropdowns, set multiple selections
+                            trigger.values.forEach(value => {
+                                const option = Array.from(valuesElement.options)
+                                    .find(opt => opt.value === value);
+                                if (option) {
+                                    option.selected = true;
+                                }
+                            });
+                        } else if (valuesElement.type === 'checkbox') {
+                            // For checkboxes
+                            valuesElement.checked = trigger.values.includes('Yes');
+                        } else {
+                            // For other input types
+                            valuesElement.value = trigger.values.join(', ');
+                        }
+                    } catch (error) {
+                        console.error('Error setting trigger values:', error);
+                    }
+                }
+                
+                // Handle actions ("then" conditions)
+                for (let i = 0; i < condition.then.length; i++) {
+                    const action = condition.then[i];
+                    
+                    if (i > 0) {
+                        addAction(conditionEl.id);
+                    }
+                    
+                    const actionEl = conditionEl.querySelectorAll('.condition-actions > div')[i];
+                    const typeSelect = actionEl.querySelector('.action-type');
+                    const categorySelect = actionEl.querySelector('.action-category');
+                    
+                    // Set type and category
+                    typeSelect.value = action.type;
+                    categorySelect.value = action.category;
+                    categorySelect.dispatchEvent(new Event('change'));
+                    
+                    try {
+                        // Wait for values container to be populated
+                        const valuesElement = await waitForElement('.action-values > *:first-child', actionEl);
+                        const wholeCategoryCheckbox = actionEl.querySelector('.action-values input[type="checkbox"]');
+                        
+                        if (action.applyToWholeCategory && wholeCategoryCheckbox) {
+                            wholeCategoryCheckbox.checked = true;
+                        } else if (valuesElement) {
+                            if (valuesElement.tagName === 'SELECT') {
+                                // For dropdowns, set multiple selections
+                                action.values.forEach(value => {
+                                    const option = Array.from(valuesElement.options)
+                                        .find(opt => opt.value === value);
+                                    if (option) {
+                                        option.selected = true;
+                                    }
+                                });
+                            } else if (valuesElement.type === 'checkbox') {
+                                // For checkboxes
+                                valuesElement.checked = action.values.includes('Yes');
+                            } else {
+                                // For other input types
+                                valuesElement.value = action.values.join(', ');
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error setting action values:', error);
+                    }
+                }
+                
+                // Collapse the condition
+                const cardBody = conditionEl.querySelector('.card-body');
+                const toggleButton = conditionEl.querySelector('.toggle-condition');
+                if (cardBody && toggleButton) {
+                    cardBody.style.display = 'none';
+                    toggleButton.innerHTML = '<span class="material-symbols-outlined expand_circle_down">expand_circle_down</span>';
+                }
+            }
+        };
+        
+        // Execute the async rendering
+        renderConditions().catch(error => {
+            console.error('Error rendering conditions:', error);
+        });
+    }
 }
 
 // Expose necessary functions
